@@ -2,59 +2,146 @@ const servicoDeUsuario = require("../services/servicoDeUsuario");
 const { HttpError } = require("../errors/HttpError");
 
 class ControladorDeUsuario {
-  pegarTodos(_req, res) {
-    try {
-      const usuarios = servicoDeUsuario.buscarTodos();
+    pegarTodos(_req, res) {
+        try {
+            const usuarios = servicoDeUsuario.buscarTodos();
 
-      if (usuarios.length === 0) {
-        return res
-          .status(404)
-          .json({ messagem: "Nenhum usuário foi encontrado." });
-      }
+            if (usuarios.length === 0) {
+                return res
+                    .status(404)
+                    .json({ messagem: "Nenhum usuário foi encontrado." });
+            }
 
-      res.status(200).json(usuarios);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ erro: error.message || "Erro ao buscar usuários." });
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(500).json({
+                erro: error.message || "Erro ao buscar usuários.",
+            });
+        }
     }
-  }
 
-  cadastrar(req, res) {
-    try {
-      const { nome, email, cpf, senha } = req.body;
-      const resposta = servicoDeUsuario.cadastrar(nome, email, cpf, senha);
+    pegarUmPeloID(req, res) {
+        try {
+            //Coleta os dados necessários
+            const usuarios = servicoDeUsuario.buscarTodos();
+            const id = req.params.id;
+            const usuárioPorID = servicoDeUsuario.buscarPeloID(id);
+            //Checagem de dados vazios ou incorretos
+            if (usuarios.length === 0 || !usuárioPorID) {
+                return res
+                    .status(404)
+                    .json({ message: "Nenhum usuário foi encontrado." });
+            }
 
-      if (resposta instanceof Error) {
-        return res.status(400).json(resposta.message);
-      }
-
-      res.status(201).json(resposta);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ erro: error.message || "Erro ao buscar usuários." });
+            res.status(200).json(usuárioPorID);
+        } catch (error) {
+            res.status(500).json({
+                erro: error.message || "Erro ao buscar usuário.",
+            });
+        }
     }
-  }
 
-  conectar(req, res) {
-    try {
-      const { email, senha } = req.body;
-      const resposta = servicoDeUsuario.conectar(email, senha);
+    cadastrar(req, res) {
+        try {
+            const { nome, email, cpf, senha } = req.body;
+            const resposta = servicoDeUsuario.cadastrar(
+                nome,
+                email,
+                cpf,
+                senha
+            );
 
-      if (resposta instanceof HttpError) {
-        return res.status(resposta.status).json({ erro: resposta.message });
-      }
+            if (resposta instanceof Error) {
+                return res.status(400).json(resposta.message);
+            }
 
-      res.status(200).json(resposta);
-    } catch (error) {
-      if (error instanceof HttpError) {
-        return res.status(error.status).json({ erro: error.message });
-      }
-
-      res.status(500).json({ erro: error.message });
+            res.status(201).json(resposta);
+        } catch (error) {
+            res.status(500).json({
+                erro: error.message || "Erro ao buscar usuários.",
+            });
+        }
     }
-  }
+
+    conectar(req, res) {
+        try {
+            const { email, senha } = req.body;
+            const resposta = servicoDeUsuario.conectar(email, senha);
+
+            if (resposta instanceof HttpError) {
+                return res
+                    .status(resposta.status)
+                    .json({ erro: resposta.message });
+            }
+
+            res.status(200).json(resposta);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                return res.status(error.status).json({ erro: error.message });
+            }
+
+            res.status(500).json({ erro: error.message });
+        }
+    }
+
+    atualizarPeloID(req, res) {
+        try {
+            const { nome, email, cpf } = req.body;
+            const usuarios = servicoDeUsuario.buscarTodos();
+            const id = req.params.id;
+            const usuárioPorID = usuarios.find((usuario) => usuario.id === id);
+
+            if (usuarios.length === 0 || !usuárioPorID) {
+                return res
+                    .status(404)
+                    .json({ message: "Nenhum usuário foi encontrado." });
+            }
+
+            if (!nome && !email && !cpf) {
+                return res.status(400).json({ message: "Dados inexistentes" });
+            }
+
+            const dados = { nome, email, cpf };
+
+            for (const chave in dados) {
+                if (dados[chave]) {
+                    usuárioPorID[chave] = dados[chave];
+                }
+            }
+
+            servicoDeUsuario.cadastrar(usuárioPorID);
+            res.status(200).json({ message: "Usuário atualizado" });
+        } catch (error) {
+            if (error instanceof HttpError) {
+                return res.status(error.status).json({ erro: error.message });
+            }
+
+            res.status(500).json({ erro: error.message });
+        }
+    }
+
+    deletar(req, res) {
+        try {
+            const usuarios = servicoDeUsuario.buscarTodos();
+            const id = req.params.id;
+            const usuárioPorID = usuarios.find((usuario) => usuario.id === id);
+
+            if (usuarios.length === 0 || !usuárioPorID) {
+                return res
+                    .status(404)
+                    .json({ message: "Nenhum usuário foi encontrado." });
+            }
+
+            servicoDeUsuario.deletarUmUsuario(id);
+            res.status(204).json();
+        } catch (error) {
+            if (error instanceof HttpError) {
+                return res.status(error.status).json({ erro: error.message });
+            }
+
+            res.status(500).json({ erro: error.message });
+        }
+    }
 }
 
 module.exports = new ControladorDeUsuario();
