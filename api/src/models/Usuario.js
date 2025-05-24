@@ -17,7 +17,7 @@ const usuarios = [
 ];
 
 class Usuario {
-    constructor(nome, email, cpf, senhaHash) {
+    constructor(nome, email, cpf, role, senhaHash) {
         this.id = Math.random().toString(36).substring(2, 10);
         this.nome = nome;
         this.email = email;
@@ -38,14 +38,14 @@ class Usuario {
         return usuarios.find((usuario) => usuario.email === email);
     }
 
-    static deletarUmUsuario(id) {
-        const index = usuarios.findIndex((usuario) => usuario.id === id);
-        usuarios.splice(index, 1);
-    }
-
     salvar() {
         usuarios.push(this);
         return this;
+    }
+
+    static deletarUmUsuario(id) {
+        const index = usuarios.findIndex((usuario) => usuario.id === id);
+        usuarios.splice(index, 1);
     }
 
     static async criptografar(senha) {

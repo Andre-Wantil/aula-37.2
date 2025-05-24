@@ -1,3 +1,5 @@
+const { Usuario } = require("./Usuario");
+
 class Professor extends Usuario {
   constructor(nome, email, cpf, senhaHash, disciplinas) {
     super(nome, email, cpf, senhaHash);
@@ -25,3 +27,5 @@ class Professor extends Usuario {
     this.disciplinas[this.disciplinas.indexOf(disciplina)] = novaDisciplina;
   }
 }
+
+module.exports = { Professor }

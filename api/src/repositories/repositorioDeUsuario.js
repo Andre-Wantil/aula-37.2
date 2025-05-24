@@ -17,9 +17,6 @@ class RepositorioDeUsuario {
         return Usuario.buscarPeloEmail(email);
     }
 
-    deletarUmUsuario(id) {
-        return Usuario.deletarUmUsuario(id);
-    }
 }
 
 module.exports = new RepositorioDeUsuario();

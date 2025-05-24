@@ -71,9 +71,7 @@ class ServicoDeUsuario {
         return token;
     }
 
-    deletarUmUsuario(id) {
-        return RepositorioDeUsuario.deletarUmUsuario(id);
-    }
+    
 }
 
 module.exports = new ServicoDeUsuario();
