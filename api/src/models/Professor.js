@@ -3,7 +3,7 @@ const { Usuario } = require("./Usuario");
 class Professor extends Usuario {
   constructor(nome, email, cpf, senhaHash, disciplinas) {
     super(nome, email, cpf, senhaHash);
-    this.role = "teacher";
+    this.role = "professor";
     this.disciplinas = disciplinas;
   }
 

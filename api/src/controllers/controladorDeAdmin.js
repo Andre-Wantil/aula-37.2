@@ -64,20 +64,25 @@ class ControladorDeAdmin {
 
     cadastrarProfessor(req, res) {
             try {
-                const { nome, email, cpf, senha, disciplinas } = req.body;
-                const resposta = servicoDeAdmin.cadastrarProfessor(
-                    nome,
-                    email,
-                    cpf,
-                    senha,
-                    disciplinas
-                );
-    
-                if (resposta instanceof Error) {
-                    return res.status(400).json(resposta.message);
+                if (req.headers["x-auth-level"] === "wZl9wYlYusNEPYe5SOBaTmIhbM20qNVaJ85XZZ9Q16s") {
+                    const { nome, email, cpf, senha, disciplinas } = req.body;
+                    const resposta = servicoDeAdmin.cadastrarProfessor(
+                        nome,
+                        email,
+                        cpf,
+                        senha,
+                        disciplinas
+                    );
+        
+                    if (resposta instanceof Error) {
+                        return res.status(400).json(resposta.message);
+                    }
+        
+                    res.status(201).json(resposta);
+                } else {
+                    res.status(401).json({ mensagem: "Você não tem autorização para executar essa requisição" })
                 }
-    
-                res.status(201).json(resposta);
+
             } catch (error) {
                 res.status(500).json({
                     erro: error.message || "Erro ao buscar usuários.",
