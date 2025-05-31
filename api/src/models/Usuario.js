@@ -52,7 +52,7 @@ class Usuario {
         return await bcrypt.hash(senha, 10);
     }
 
-    async compararSenha(senha) {
+    static async compararSenha(senha) {
         return await bcrypt.compare(senha, this.senha);
     }
 }

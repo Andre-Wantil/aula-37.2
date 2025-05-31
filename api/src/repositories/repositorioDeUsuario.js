@@ -17,6 +17,10 @@ class RepositorioDeUsuario {
         return Usuario.buscarPeloEmail(email);
     }
 
+    async compararSenha(senha) {
+        return await Usuario.compararSenha(senha);
+    }
+
 }
 
 module.exports = new RepositorioDeUsuario();

@@ -7,7 +7,7 @@ class Professor extends Usuario {
     this.disciplinas = disciplinas;
   }
 
-  async novaAula(disciplina) {
+  static novaAula(disciplina) {
     this.disciplinas.push(disciplina);
   }
 

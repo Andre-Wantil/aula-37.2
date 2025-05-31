@@ -46,13 +46,13 @@ class ServicoDeUsuario {
         return RepositorioDeUsuario.criar(usuario);
     }
 
-    conectar(email, senha) {
+    async conectar(email, senha) {
         const usuarioEncontrado = RepositorioDeUsuario.buscarPeloEmail(email);
         if (!usuarioEncontrado) {
             throw new HttpError(404, "Usuário não encontrado.");
         }
 
-        const autenticado = usuarioEncontrado.compararSenha(senha);
+        const autenticado = await RepositorioDeUsuario.compararSenha(senha);
         if (!autenticado) {
             throw new HttpError(401, "Senha incorreta.");
         }
